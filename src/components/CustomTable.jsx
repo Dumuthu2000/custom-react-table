@@ -13,27 +13,27 @@ const CustomTable = () => {
     setData(tableData);
   }, []);
 
-  const handleEdit = (index) => {
+  const handleEdit=(index)=>{
     setEditRow(index);
     setFormData({ ...data[index] });
   };
 
-  const handleUpdate = (index) => {
+  const handleUpdate=(index)=>{
     const updatedData = [...data];
     updatedData[index] = formData;
     setData(updatedData);
     setEditRow(null);
   };
 
-  const handleInputChange = (e) => {
+  const handleInputChange=(e)=>{
     const { id, value, type, checked } = e.target;
-    setFormData((prev) => ({
+    setFormData((prev)=>({
       ...prev,
       [id]: type === "checkbox" ? checked : value,
     }));
   };
 
-  const handleAddButton = () => {
+  const handleAddButton=()=>{
     setIsAdding(true);
     setFormData({ name: "", jobRole: jobRoles[0], isMarried: false });
     setData([
@@ -42,7 +42,7 @@ const CustomTable = () => {
     ]);
   };
 
-  const handleSubmitNew = (index) => {
+  const handleSubmitNew=(index)=>{
     const updatedData = [...data];
     updatedData[index] = { ...formData, isNew: false };
     setData(updatedData);
@@ -50,7 +50,7 @@ const CustomTable = () => {
     setFormData({});
   };
 
-  const handleDelete = (selectedIndex) => {
+  const handleDelete=(selectedIndex)=>{
     const filteredData = data.filter((_, index) => index !== selectedIndex);
     setData(filteredData);
     if (editRow === selectedIndex){
