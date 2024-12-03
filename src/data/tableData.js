@@ -32,6 +32,6 @@ export const tableData = [
     {
         name: 'test7',
         jobRole: 'Product Manager',
-        isMarried: false,
+        isMarried: true,
     },
 ]
