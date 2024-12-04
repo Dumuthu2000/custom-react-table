@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { tableData } from "../data/tableData";
+import { Link } from 'react-router-dom'
 
 const CustomTable = () => {
   const [data, setData] = useState([]);
@@ -7,6 +8,7 @@ const CustomTable = () => {
   const [formData, setFormData] = useState({});
   const [isAdding, setIsAdding] = useState(false);
 
+  //Storing all dropdown data
   const jobRoles = ["Product Manager", "QA Engineer", "Software Engineer"];
 
   useEffect(() => {
@@ -26,13 +28,14 @@ const CustomTable = () => {
   };
 
   const handleInputChange=(e)=>{
-    const { id, value, type, checked } = e.target;
+    const { id, value, type, checked } = e.target; //Destructuring the user event objects
     setFormData((prev)=>({
       ...prev,
       [id]: type === "checkbox" ? checked : value,
     }));
   };
 
+  //Add new row in a column to insert new data
   const handleAddButton=()=>{
     setIsAdding(true);
     setFormData({ name: "", jobRole: jobRoles[0], isMarried: false });
@@ -42,6 +45,7 @@ const CustomTable = () => {
     ]);
   };
 
+  //Submitting added new to the table
   const handleSubmitNew=(index)=>{
     const updatedData = [...data];
     updatedData[index] = { ...formData, isNew: false };
@@ -134,6 +138,7 @@ const CustomTable = () => {
           ))}
         </tbody>
       </table>
+      <Link to={`/profile`}>Go to next</Link>
     </div>
   );
 };
