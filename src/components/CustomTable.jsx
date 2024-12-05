@@ -1,65 +1,61 @@
 import React, { useEffect, useState } from "react";
+import { useSelector, useDispatch } from 'react-redux';
+import { Link } from 'react-router-dom';
+import { addUser, updateUser } from '../store/userSlice';
 import { tableData } from "../data/tableData";
-import { Link } from 'react-router-dom'
 
 const CustomTable = () => {
-  const [data, setData] = useState([]);
+  const dispatch = useDispatch();
+  const userData = useSelector((state) => state.users.userData);
+  
   const [editRow, setEditRow] = useState(null);
   const [formData, setFormData] = useState({});
   const [isAdding, setIsAdding] = useState(false);
 
-  //Storing all dropdown data
   const jobRoles = ["Product Manager", "QA Engineer", "Software Engineer"];
 
   useEffect(() => {
-    setData(tableData);
-  }, []);
+    if (userData.length === 0) {
+      // Initial data loading
+      tableData.forEach(user => dispatch(addUser(user)));
+    }
+  }, [dispatch, userData]);
 
-  const handleEdit=(index)=>{
+  const handleEdit = (index) => {
     setEditRow(index);
-    setFormData({ ...data[index] });
+    setFormData({ ...userData[index] });
   };
 
-  const handleUpdate=(index)=>{
-    const updatedData = [...data];
-    updatedData[index] = formData;
-    setData(updatedData);
+  const handleUpdate = (index) => {
+    dispatch(updateUser({ index, userData: formData }));
     setEditRow(null);
   };
 
-  const handleInputChange=(e)=>{
-    const { id, value, type, checked } = e.target; //Destructuring the user event objects
-    setFormData((prev)=>({
+  const handleInputChange = (e) => {
+    const { id, value, type, checked } = e.target;
+    setFormData((prev) => ({
       ...prev,
       [id]: type === "checkbox" ? checked : value,
     }));
   };
 
-  //Add new row in a column to insert new data
-  const handleAddButton=()=>{
+  const handleAddButton = () => {
     setIsAdding(true);
-    setFormData({ name: "", jobRole: jobRoles[0], isMarried: false });
-    setData([
-      ...data,
-      { name: "", jobRole: jobRoles[0], isMarried: false, isNew: true },
-    ]);
+    const newUser = { 
+      name: "", 
+      jobRole: jobRoles[0], 
+      isMarried: false, 
+      isNew: true 
+    };
+    dispatch(addUser(newUser));
+    setFormData(newUser);
   };
 
-  //Submitting added new to the table
-  const handleSubmitNew=(index)=>{
-    const updatedData = [...data];
-    updatedData[index] = { ...formData, isNew: false };
-    setData(updatedData);
+  const handleSubmitNew = (index) => {
+    const updatedUser = { ...formData, isNew: false };
+    dispatch(updateUser({ index, userData: updatedUser }));
     setIsAdding(false);
     setFormData({});
-  };
-
-  const handleDelete=(selectedIndex)=>{
-    const filteredData = data.filter((_, index) => index !== selectedIndex);
-    setData(filteredData);
-    if (editRow === selectedIndex){
-        setEditRow(null);  
-    } 
   };
 
   return (
@@ -77,10 +73,10 @@ const CustomTable = () => {
           </tr>
         </thead>
         <tbody>
-          {data.map((userData, index) => (
+          {userData.map((user, index) => (
             <tr key={index}>
               <td>
-                {editRow === index || userData.isNew ? (
+                {editRow === index || user.isNew ? (
                   <input
                     id="name"
                     type="text"
@@ -88,11 +84,11 @@ const CustomTable = () => {
                     onChange={handleInputChange}
                   />
                 ) : (
-                  userData.name
+                  user.name
                 )}
               </td>
               <td>
-                {editRow === index || userData.isNew ? (
+                {editRow === index || user.isNew ? (
                   <select
                     id="jobRole"
                     value={formData.jobRole}
@@ -105,25 +101,25 @@ const CustomTable = () => {
                     ))}
                   </select>
                 ) : (
-                  userData.jobRole
+                  user.jobRole
                 )}
               </td>
               <td>
-                {editRow === index || userData.isNew ? (
+                {editRow === index || user.isNew ? (
                   <input
                     id="isMarried"
                     type="checkbox"
                     checked={formData.isMarried}
                     onChange={handleInputChange}
                   />
-                ) : userData.isMarried ? (
+                ) : user.isMarried ? (
                   "Yes"
                 ) : (
                   "No"
                 )}
               </td>
               <td>
-                {userData.isNew ? (
+                {user.isNew ? (
                   <button onClick={() => handleSubmitNew(index)}>Submit</button>
                 ) : editRow === index ? (
                   <button onClick={() => handleUpdate(index)}>Update</button>
