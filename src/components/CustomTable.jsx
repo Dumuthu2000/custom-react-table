@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { useSelector, useDispatch } from 'react-redux';
-import { Link } from 'react-router-dom';
-import { addUser, updateUser } from '../store/userSlice';
+import { useSelector, useDispatch } from "react-redux";
+import { Link } from "react-router-dom";
+import { addUser, updateUser, deleteUser } from "../store/userSlice";
 import { tableData } from "../data/tableData";
 
 const CustomTable = () => {
   const dispatch = useDispatch();
   const userData = useSelector((state) => state.users.userData);
-  
+
   const [editRow, setEditRow] = useState(null);
   const [formData, setFormData] = useState({});
   const [isAdding, setIsAdding] = useState(false);
@@ -17,7 +17,7 @@ const CustomTable = () => {
   useEffect(() => {
     if (userData.length === 0) {
       // Initial data loading
-      tableData.forEach(user => dispatch(addUser(user)));
+      tableData.forEach((user) => dispatch(addUser(user)));
     }
   }, [dispatch, userData]);
 
@@ -31,6 +31,14 @@ const CustomTable = () => {
     setEditRow(null);
   };
 
+  //Handling user deletion
+  const handleDelete = (selectedIndex) => {
+    dispatch(deleteUser(selectedIndex));
+    if (editRow === selectedIndex) {
+      setEditRow(null);
+    }
+  };
+
   const handleInputChange = (e) => {
     const { id, value, type, checked } = e.target;
     setFormData((prev) => ({
@@ -39,18 +47,20 @@ const CustomTable = () => {
     }));
   };
 
+  //Handling adding new user data
   const handleAddButton = () => {
     setIsAdding(true);
-    const newUser = { 
-      name: "", 
-      jobRole: jobRoles[0], 
-      isMarried: false, 
-      isNew: true 
+    const newUser = {
+      name: "",
+      jobRole: jobRoles[0],
+      isMarried: false,
+      isNew: true,
     };
     dispatch(addUser(newUser));
     setFormData(newUser);
   };
 
+  //Handling submitting functionality where added user data
   const handleSubmitNew = (index) => {
     const updatedUser = { ...formData, isNew: false };
     dispatch(updateUser({ index, userData: updatedUser }));
