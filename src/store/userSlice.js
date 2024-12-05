@@ -13,6 +13,9 @@ const userSlice = createSlice({
       const { index, userData } = action.payload;
       state.userData[index] = userData;
     },
+    deleteUser: (state, action) => {
+      state.userData = state.userData.filter((_, index) => index !== action.payload);
+    }
   }
 });
 
